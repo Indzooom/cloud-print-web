@@ -4,8 +4,17 @@
  {
   header("location:index.php");
  }
+ 
 ?>
 <?php
+$con=mysqli_connect("localhost","root","","iak_printer");
+	// Check connection
+if (mysqli_connect_errno())
+  {
+  echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  }
+
+//$result = mysqli_query($con,"SELECT username, password FROM users");
 //$allowedExts = array("gif", "jpeg", "jpg", "png");
 $temp = explode(".", $_FILES["file"]["name"]);
 $extension = end($temp);
@@ -77,13 +86,11 @@ if($gcp->loginToGoogle("brilliantsurya@gmail.com", "ordinary94")) {
 	
 	$printerid = "";
 	if(count($printers)==0) {
-		
 		echo "Could not get printers";
 		exit;
 	}
 	else {
-		
-		$printerid = $printers[0]['id']; // Pass id of any printer to be used for print
+		$printerid = $printers[$_POST['printer']]['id']; // Pass id of any printer to be used for print
 	}
 	// Send document to the printer
 	$resarray = $gcp->sendPrintToPrinter($printerid,  $newname , "./upload/".$newname, $_FILES["file"]["type"]);
@@ -95,22 +102,24 @@ if($gcp->loginToGoogle("brilliantsurya@gmail.com", "ordinary94")) {
 	$datajobs['0']['title'];
 	
 	for($i=0; $i < count($datajobs); $i++){
-		echo 'title: '.$datajobs[$i]['title'].'<br>';
-		echo 'number of page: '.$datajobs[$i]['numberOfPages'].'<br><br>';
+		if($datajobs[$i]['title'] == $newname){
+			mysqli_query($con,"INSERT INTO log_print (id_user, nama_dokumen, jml_hal) 
+					VALUES ('".$_SESSION['id']."', '".$datajobs[$i]['title']."',".$datajobs[$i]['numberOfPages'].")");
+		}
 	}
 	
-	/*if($resarray['status']==true) {
-		
+	//echo $jobs;
+	if($resarray['status']==true) {
 		echo "Document has been sent to printer and should print shortly.";
 	}
 	else {
-		
 		echo "An error occured while printing the doc. Error code:".$resarray['errorcode']." Message:".$resarray['errormessage'];
-	}*/
+	}
 	
 }
 else {
-	
 	echo "Login failed please check login info.";
 	exit;
 }
+?>
+<INPUT Type="BUTTON" VALUE="Billing" ONCLICK="window.location.href='billing.php'">

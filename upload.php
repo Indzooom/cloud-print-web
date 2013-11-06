@@ -15,13 +15,28 @@
 <body>
 
  <?php
+  require_once 'GoogleCloudPrint.php';
+  $gcp = new GoogleCloudPrint();
   echo '<p>Welcome, ' . ucfirst($_SESSION['username']) . '!</p>';
  ?>
 <form action="response.php" method="post" enctype="multipart/form-data">
+	<?php 
+		if($gcp->loginToGoogle("brilliantsurya@gmail.com", "ordinary94")) {
+			$printers = $gcp->getPrinters(); 
+		}
+	?>
+	<label for="printer">Select Printer</label>
+	<select name="printer">
+		<?php for($i=0; $i < count($printers); $i++) :?>
+			<option value=<?=$i?>><?=$printers[$i]['name']?></option>
+		<?php endfor; ?>
+	</select>
+	
 	<label for="file">File</label>
 	<input type="file" name="file" id="file"><br>
 	<input type="submit" name="submit" value="Print" class="btn">
+	
 </form>
-
+	<INPUT Type="BUTTON" VALUE="Logout" ONCLICK="window.location.href='logout.php'" class="btn">
 </body>
 </html>
