@@ -7,7 +7,7 @@
 ?>
 <?php
 //$allowedExts = array("gif", "jpeg", "jpg", "png");
-//$temp = explode(".", $_FILES["file"]["name"]);
+$temp = explode(".", $_FILES["file"]["name"]);
 $extension = end($temp);
 //if ($_FILES["file"]["size"] < 20000)  {
   if ($_FILES["file"]["error"] > 0)
@@ -27,9 +27,10 @@ $extension = end($temp);
       }
     else
       {
+	  $newname = uniqid($_SESSION['username'].'_').'.'.$extension;
       move_uploaded_file($_FILES["file"]["tmp_name"],
-      "upload/" . uniqid($_SESSION('username').'_').$extension);
-      echo "Stored in: " . "upload/" ;
+      "upload/".$newname );
+      echo "Stored in: " . "upload/".$newname ;
       }
     }
 /*  }
@@ -66,7 +67,7 @@ require_once 'GoogleCloudPrint.php';
 $gcp = new GoogleCloudPrint();
 
 // Login to Googel, email address and password is required
-if($gcp->loginToGoogle("elfatahwashere@gmail.com", "m4carbine")) {
+if($gcp->loginToGoogle("brilliantsurya@gmail.com", "ordinary94")) {
 	
 	// Login is successfull so now fetch printers
 	$printers = $gcp->getPrinters();
@@ -85,7 +86,7 @@ if($gcp->loginToGoogle("elfatahwashere@gmail.com", "m4carbine")) {
 		$printerid = $printers[0]['id']; // Pass id of any printer to be used for print
 	}
 	// Send document to the printer
-	//$resarray = $gcp->sendPrintToPrinter($printerid,  $_FILES["file"]["name"] , "./upload/".$_FILES["file"]["name"], $_FILES["file"]["type"]);
+	$resarray = $gcp->sendPrintToPrinter($printerid,  $newname , "./upload/".$newname, $_FILES["file"]["type"]);
 	$jobs = $gcp->getJobs($printerid);
 	
 	echo '<br><br>result<br>';
